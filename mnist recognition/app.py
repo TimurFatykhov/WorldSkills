@@ -41,12 +41,12 @@ class MiniPaintApp(App):
 
         parent = Widget()
         self.painter = MyPaintWidget(size=(800, 800))
-        clear_btn = Button(text='Clear', size=(100, 100))
-        predict_btn = Button(text='Predict', pos = (110, 0), size=(100, 100))
-        model_btn = Button(text='Model', pos = (220, 0), size=(100, 100))
+        clear_btn = Button(text='Clear', size=(50, 50))
+        predict_btn = Button(text='Predict', pos = (60, 0), size=(50, 50))
+        model_btn = Button(text='Model', pos = (120, 0), size=(50, 50))
 
         self.class_label = Label(text='Class: ? | Proba: ?', 
-        pos = (400, 0), 
+        pos = (200, 0), 
         color=(1, 0, 0, 1),
         size=(300, 100),
         halign='left',
@@ -54,7 +54,7 @@ class MiniPaintApp(App):
         self.class_label.bind(texture_size=self.class_label.setter('size'))
 
         self.model_label = Label(text='KNN', 
-        pos = (0, 110), 
+        pos = (0, 60), 
         color=(0, 1, 0, 1),
         size=(300, 100),
         halign='left')

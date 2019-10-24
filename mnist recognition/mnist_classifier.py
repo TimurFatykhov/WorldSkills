@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import PIL
 import pickle
+import cv2 
 
 TO_KNN = './knn.pickle'
 
@@ -21,10 +22,12 @@ class KNNClassifier():
             return -1, -1
 
         img = PIL.Image.open(img_path)
-        img = img.resize((28, 28))
-        arr = np.asarray(img).reshape(-1, 28*28)
-        # arr = arr / arr.max()
-        print(arr.max())
+        arr = np.asarray(img)
+        if len(arr.shape) > 2:
+            arr = arr[..., 0] # rgb to gray
+        arr = cv2.resize(arr, (28, 28), interpolation=cv2.INTER_AREA)
+        arr = arr.reshape(-1, 28*28)
+
         proba = self.model.predict_proba(arr)[0]
         return proba.argmax(), proba.max()
 
@@ -41,13 +44,12 @@ class NNClassifier():
             return -1, -1
 
         img = PIL.Image.open(img_path)
-        img = img.resize((28, 28))
         arr = np.asarray(img)
-        arr = arr / arr.max()
-        
         if len(arr.shape) > 2:
             arr = arr[..., 0] # rgb to gray
-            
+        arr = arr / arr.max()
+        arr = cv2.resize(arr, (28, 28), interpolation=cv2.INTER_AREA)
+
         t = torch.Tensor(arr.reshape((1, 1) + arr.shape))
         
         model = self.model.to(device)
