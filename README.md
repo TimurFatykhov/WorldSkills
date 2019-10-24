@@ -1,3 +1,4 @@
+
 # World Skills: Машинное Обучение
 ---
 **Windows:**
@@ -13,11 +14,13 @@ python -m pip install pygame
 python -m pip install kivy
 pip install albumentations
 ```
-<br>
+
 Чтобы запустить графическое приложение для распознавания цифр:
+
 - скачиваем репозиторий в папку Downloads
 - разархивируем сжатый файл в Downloads
 - выполняем в Anaconda Prompt:
+
 ```
 cd "Downloads\WorldSkills-master\mnist recognition"
 python app.py
