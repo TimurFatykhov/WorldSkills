@@ -1,6 +1,7 @@
-# WorldSkills
+# World Skills: Машинное Обучение
 ---
-Windows:
+**Windows:**
+<br>
 Поиск -> Anaconda Prompt -> выполняем команды:
 ```
 conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
