@@ -24,11 +24,26 @@ Config.set('graphics', 'height', '400')
 Window.size = (400, 400)
 
 class MyPaintWidget(Widget):
+    def __init__(self, **kwargs):
+        self.brush_width = 26
+        super(MyPaintWidget, self).__init__(**kwargs)
+        self._keyboard = Window.request_keyboard(
+            self._keyboard_closed, self, 'text')
+        if self._keyboard.widget:
+            # If it exists, this widget is a VKeyboard object which you can use
+            # to change the keyboard layout.
+            pass
+    #     self._keyboard.bind(on_key_down=self._on_keyboard_down)
+
+    def _keyboard_closed(self):
+        print('My keyboard have been closed!')
+        self._keyboard.unbind(on_key_down=self._on_keyboard_down)
+        self._keyboard = None
 
     def on_touch_down(self, touch):
         with self.canvas:
             Color((1, 1, 1))
-            touch.ud['line'] = Line(points=(touch.x, touch.y), width=22)
+            touch.ud['line'] = Line(points=(touch.x, touch.y), width=self.brush_width)
 
     def on_touch_move(self, touch):
         touch.ud['line'].points += [touch.x, touch.y]
@@ -41,9 +56,11 @@ class MiniPaintApp(App):
 
         parent = Widget()
         self.painter = MyPaintWidget(size=(800, 800))
-        clear_btn = Button(text='Clear', size=(50, 50))
-        predict_btn = Button(text='Predict', pos = (60, 0), size=(50, 50))
-        model_btn = Button(text='Model', pos = (120, 0), size=(50, 50))
+        self.clear_btn = Button(text='Clear', size=(50, 50))
+        self.predict_btn = Button(text='Predict', pos = (60, 0), size=(50, 50))
+        self.model_btn = Button(text='Model', pos = (120, 0), size=(50, 50))
+
+        self.painter._keyboard.bind(on_key_down=self._on_keyboard_down)
 
         self.class_label = Label(text='Class: ? | Proba: ?', 
         pos = (200, 0), 
@@ -60,17 +77,81 @@ class MiniPaintApp(App):
         halign='left')
         self.model_label.bind(texture_size=self.model_label.setter('size'))
 
-        clear_btn.bind(on_release=self.clear)
-        predict_btn.bind(on_release=self.predict)
-        model_btn.bind(on_release=self.change_model)
+        self.clear_btn.bind(on_release=self.clear)
+        self.predict_btn.bind(on_release=self.predict)
+        self.model_btn.bind(on_release=self.change_model)
 
         parent.add_widget(self.painter)
-        parent.add_widget(clear_btn)
-        parent.add_widget(predict_btn)
-        parent.add_widget(model_btn)
+        parent.add_widget(self.clear_btn)
+        parent.add_widget(self.predict_btn)
+        parent.add_widget(self.model_btn)
         parent.add_widget(self.class_label)
         parent.add_widget(self.model_label)
         return parent
+
+    def _on_keyboard_down(self, keyboard, keycode, text, modifiers):
+        # print(self.children)
+        if keycode[1] == 'w':
+            # увеличиваем размер кисти
+            if self.painter.brush_width < 100:
+                self.painter.brush_width += 1
+                print('Размер кисти увеличился до %d' % (self.painter.brush_width))
+            else:
+                print('Достигнут наибольший размер кисти')
+        elif keycode[1] == 's':
+            # уменьшаем размер кисти
+            if self.painter.brush_width > 1:
+                self.painter.brush_width -= 1
+                print('Размер кисти уменьшился до %d' % (self.painter.brush_width))
+            else:
+                print('Достигнут наименьший размер кисти')
+
+
+        elif keycode[1] == 'q':
+            # увеличиваем размер кнопок и лэйблов
+            if self.clear_btn.size[0] < 200:
+                self.clear_btn.size[0] += 5; self.clear_btn.size[1] += 5
+                self.predict_btn.size[0] += 5; self.predict_btn.size[1] += 5
+                self.model_btn.size[0] += 5; self.model_btn.size[1] += 5
+
+
+                self.predict_btn.pos[0] += 5
+                self.model_btn.pos[0] += 10
+                self.class_label.pos[0] += 15
+
+                self.model_label.pos[1] += 5
+            else:
+                print('Достигнут наибольший размер кнопок')
+        elif keycode[1] == 'a':
+            # уменьшаем размер кнопок и лэйблов
+            if self.clear_btn.size[0] > 30:
+                self.clear_btn.size[0] -= 5; self.clear_btn.size[1] -= 5
+                self.predict_btn.size[0] -= 5; self.predict_btn.size[1] -= 5
+                self.model_btn.size[0] -= 5; self.model_btn.size[1] -= 5
+
+
+                self.predict_btn.pos[0] -= 5
+                self.model_btn.pos[0] -= 10
+                self.class_label.pos[0] -= 15
+
+                self.model_label.pos[1] -= 5
+            else:
+                print('Достигнут наименьший размер кнопок')
+
+
+        elif keycode[1] == 'c':
+            # очистить
+            self.clear(None)
+
+        elif keycode[1] == 'p':
+            # очистить
+            self.predict(None)
+
+        elif keycode[1] == 'm':
+            # очистить
+            self.change_model(None)
+
+        return True
 
     def clear(self,event):
         self.class_label.text = 'Class: ? | Proba: ?'
