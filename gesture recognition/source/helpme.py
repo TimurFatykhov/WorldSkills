@@ -43,21 +43,23 @@ def load_gestures(path, size=(32, 32)):
         to_imgs = glob.glob(os.path.join(c, '*'))
         for to_img in to_imgs:
             img = Image.open(to_img)
-            height, width = img.size
+            width, height = img.size
             diff = height - width
 
             if diff < 0:
                 # width > height
-                half = -diff // 2
-                img = img.crop((half, 0, width + diff + half, height))
+                print('w > h')
+                diff = - diff
+                half = diff // 2
+                img = img.crop((half, 0, width - diff + half, height))
 
-            if diff > 0:
+            elif diff > 0:
                 # height > width
-                half = -diff // 2
-                img = img.crop((0, half, width, height + diff + half))
+                half = diff // 2
+                img = img.crop((0, half, width, height - diff + half))
 
             img = img.resize(size=size, resample=Image.BICUBIC)
-
+            
             pix_arr = np.asarray(img)
             pix_arr = pix_arr - pix_arr.min()
             pix_arr = pix_arr / pix_arr.max()
