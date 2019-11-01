@@ -1,4 +1,5 @@
 MNIST
+Dataset
 *.pickle
 *.pt
 
