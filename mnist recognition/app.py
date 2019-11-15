@@ -55,7 +55,7 @@ class MiniPaintApp(App):
         self.classifier = KNNClassifier()
 
         parent = Widget()
-        self.painter = MyPaintWidget(size=(800, 800))
+        self.painter = MyPaintWidget(size=Window.size)
         self.clear_btn = Button(text='Clear', size=(50, 50))
         self.predict_btn = Button(text='Predict', pos = (60, 0), size=(50, 50))
         self.model_btn = Button(text='Model', pos = (120, 0), size=(50, 50))
